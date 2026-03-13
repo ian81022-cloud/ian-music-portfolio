@@ -711,22 +711,34 @@
             
             if (window.updateHeroPlayerIcon) window.updateHeroPlayerIcon();
 
-            var activeBtn = document.querySelector('.play-pause-btn iconify-icon[icon="ph:pause-circle-fill"]');
-            if (activeBtn && !isPlaying) activeBtn.setAttribute('icon', 'ph:play-circle-fill');
+            // 讓所有的曲目圖示與大按鈕，都跟著播放/暫停的狀態同步更新
+            if (window.highlightActiveTrackInDOM) {
+                window.highlightActiveTrackInDOM();
+            }
         }
 
         window.highlightActiveTrackInDOM = function() {
             if (currentTrackIndex < 0 || !currentTrackList[currentTrackIndex]) return;
             var activeTrack = currentTrackList[currentTrackIndex];
+            var isPlaying = !globalAudio.paused; // 確認目前是否正在播放
             
             document.querySelectorAll('.track-item:not([data-is-video="true"])').forEach(function(el) {
                 var mobileIcon = el.querySelector('.mobile-track-icon');
                 if (el.getAttribute('data-src') === activeTrack.src && el.getAttribute('data-title') === activeTrack.title) {
                     el.classList.add('text-gold', 'bg-white/5');
                     var ind = el.querySelector('.playing-indicator');
-                    if(ind) ind.classList.remove('hidden');
-                    if(mobileIcon) mobileIcon.setAttribute('icon', 'ph:pause-fill');
+                    
+                    if (isPlaying) {
+                        // 播放中：顯示跳動音符與暫停圖示
+                        if(ind) ind.classList.remove('hidden');
+                        if(mobileIcon) mobileIcon.setAttribute('icon', 'ph:pause-fill');
+                    } else {
+                        // 暫停中：隱藏跳動音符，換回播放圖示，但保留金黃色高亮
+                        if(ind) ind.classList.add('hidden');
+                        if(mobileIcon) mobileIcon.setAttribute('icon', 'ph:play-fill');
+                    }
                 } else {
+                    // 非當前曲目：全部熄滅
                     el.classList.remove('text-gold', 'bg-white/5');
                     var ind = el.querySelector('.playing-indicator');
                     if(ind) ind.classList.add('hidden');
@@ -737,7 +749,7 @@
             document.querySelectorAll('.play-pause-btn').forEach(function(btn) {
                 var btnWork = btn.closest('.catalog-item').querySelector('h3').innerText;
                 var icon = btn.querySelector('iconify-icon');
-                if (btnWork === activeTrack.workTitle && !globalAudio.paused) {
+                if (btnWork === activeTrack.workTitle && isPlaying) {
                     icon.setAttribute('icon', 'ph:pause-circle-fill');
                 } else {
                     icon.setAttribute('icon', 'ph:play-circle-fill');
@@ -759,6 +771,12 @@
                     var mainBtn = card.querySelector('.play-pause-btn');
                     if (mainBtn) window.playWorkMain(mainBtn);
                 }
+                return;
+            }
+
+            // 【新增邏輯】：如果點擊的是「目前正在播放」的這首曲子，直接切換播放/暫停，不要重新載入
+            if (currentAudioSrc === src) {
+                window.toggleGlobalPlay();
                 return;
             }
 
