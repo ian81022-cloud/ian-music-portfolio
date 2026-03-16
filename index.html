@@ -310,6 +310,12 @@
         <!-- 手機版全螢幕選單 (Mobile Menu Overlay) -->
         <!-- ============================================== -->
         <div id="mobile-menu" class="fixed inset-0 bg-darker/95 backdrop-blur-xl z-[55] flex flex-col items-center justify-center gap-8 opacity-0 pointer-events-none transition-all duration-300">
+            <!-- 新增獨立的返回/關閉按鈕 -->
+            <button onclick="window.toggleMobileMenu()" class="flex items-center gap-2 text-gold hover:text-white font-sans text-sm tracking-[0.2em] uppercase transition-colors mb-2 cursor-pointer">
+                <iconify-icon icon="ph:x-bold" class="text-lg"></iconify-icon>
+                <span>Close Menu</span>
+            </button>
+            <a href="javascript:void(0)" onclick="window.toggleMobileMenu(); window.backToHome()" class="text-2xl font-cinematic tracking-widest text-grayLight hover:text-white transition-colors">HOME</a>
             <a href="javascript:void(0)" onclick="window.toggleMobileMenu(); window.navigateToCatalog()" class="text-2xl font-cinematic tracking-widest text-grayLight hover:text-white transition-colors">WORKS</a>
             <a href="javascript:void(0)" onclick="window.toggleMobileMenu(); window.scrollToSection('about')" class="text-2xl font-cinematic tracking-widest text-grayLight hover:text-white transition-colors">ABOUT</a>
             <a href="javascript:void(0)" onclick="window.toggleMobileMenu(); window.scrollToSection('services')" class="text-2xl font-cinematic tracking-widest text-grayLight hover:text-white transition-colors">SERVICES</a>
@@ -345,11 +351,12 @@
                     </div>
                 </div>
 
-                <!-- 縮小手機版藝廊的高度佔比 (從 450px 降至 340px) -->
-                <div class="w-full lg:w-[800px] h-[340px] md:h-[600px] shrink-0 opacity-0 translate-x-12 relative flex flex-col justify-end pb-4" id="hero-gallery-container">
+                <!-- 調整手機版藝廊高度 (改為 400px)，徹底拉開文字與海報的距離 -->
+                <div class="w-full lg:w-[800px] h-[400px] md:h-[600px] shrink-0 opacity-0 translate-x-12 relative flex flex-col justify-end pb-4 mt-2 md:mt-0" id="hero-gallery-container">
+                    <!-- 拿掉負值間距，改為 top-0，字體微調為 text-xl 讓版面更精緻 -->
                     <div class="absolute top-0 md:top-4 left-0 w-full text-center z-[60] pointer-events-none transition-all duration-300">
                         <h3 id="hero-active-cat" class="font-cinematic text-xl md:text-4xl text-white mb-1 md:mb-2 tracking-widest drop-shadow-[0_4px_8px_rgba(0,0,0,0.9)] uppercase"></h3>
-                        <p id="hero-active-title" class="font-sans text-gold text-[9px] md:text-xs tracking-[0.4em] uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"></p>
+                        <p id="hero-active-title" class="font-sans text-gold text-[10px] md:text-xs tracking-[0.4em] uppercase drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"></p>
                     </div>
 
                     <button onclick="window.heroPrev(event)" class="absolute left-0 md:-left-8 top-[55%] md:top-[55%] -translate-y-1/2 z-50 text-white/40 hover:text-white transition-all duration-300 hover:scale-125 cursor-pointer flex items-center justify-center p-1 md:p-2">
@@ -357,10 +364,6 @@
                     </button>
 
                     <div class="coverflow-container w-full h-[300px] md:h-[460px] mt-auto" id="hero-coverflow"></div>
-
-                    <button onclick="window.heroNext(event)" class="absolute right-0 md:-right-8 top-[55%] md:top-[55%] -translate-y-1/2 z-50 text-white/40 hover:text-white transition-all duration-300 hover:scale-125 cursor-pointer flex items-center justify-center p-1 md:p-2">
-                        <iconify-icon icon="ph:caret-right-light" class="text-4xl md:text-[5rem] drop-shadow-lg"></iconify-icon>
-                    </button>
 
                     <div id="hero-mini-player" class="absolute bottom-0 md:-bottom-2 left-1/2 -translate-x-1/2 z-[60] transition-all duration-500 opacity-0 pointer-events-none flex flex-col items-center gap-1">
                         <button onclick="window.playHeroWork(event)" class="group flex items-center gap-2 px-5 py-2.5 rounded-full bg-darker/80 border border-gold/40 backdrop-blur-md hover:bg-gold hover:text-dark text-white transition-all shadow-[0_4px_20px_rgba(0,0,0,0.6)] cursor-pointer">
