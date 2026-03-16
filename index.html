@@ -1118,7 +1118,7 @@
         // --- 3D Coverflow 邏輯 ---
         var coverflowInstances = {};
 
-        function initCoverflow(containerId, worksData) {
+        function initCoverflow(containerId, worksData, initialIndex = 0) {
             var container = document.getElementById(containerId);
             if (!container) return;
 
@@ -1136,7 +1136,7 @@
 
             coverflowInstances[containerId] = {
                 data: worksData,
-                currentIndex: 0, // 修改這裡：預設為 0，確保一進網頁正中央顯示的是第一項作品 (熱蘭遮)
+                currentIndex: initialIndex, // 接受從外部傳入的隨機初始 Index
                 items: Array.from(container.querySelectorAll('.cover-item')),
                 autoPlayInterval: null
             };
@@ -1608,7 +1608,15 @@
             var publishedWorks = globalWorksData.filter(function(w) { return w.status === 'Published'; });
             var heroWorks = publishedWorks.filter(function(w) { return !w.hideOnHero; });
             
-            initCoverflow('hero-coverflow', heroWorks);
+            // 隨機選擇初始海報 (Zeelandia: id 3, 鐵道博物館: id 7, 紫斑蝶: id 12)
+            var targetIds = [3, 7, 12];
+            var randomId = targetIds[Math.floor(Math.random() * targetIds.length)];
+            var startIndex = heroWorks.findIndex(function(w) { return w.id === randomId; });
+            
+            // 防呆機制：如果找不到對應作品，預設回到第 0 張
+            if (startIndex === -1) startIndex = 0;
+            
+            initCoverflow('hero-coverflow', heroWorks, startIndex);
             window.renderCatalogWorks(); 
             bindScrollReveals(); 
         }
